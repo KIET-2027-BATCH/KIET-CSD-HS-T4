@@ -3,134 +3,492 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile Price Predictor</title>
+    <title>MobilePricePro - AI Price Prediction</title>
     <style>
+        :root {
+            --primary-color: #4A55A2;
+            --secondary-color: #7895CB;
+            --accent-color: #A0BFE0;
+            --light-color: #C5DFF8;
+            --dark-color: #2A324B;
+            --success-color: #4CAF50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            line-height: 1.6;
         }
-        .container {
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
+
+        .header {
             text-align: center;
+            padding: 30px 0;
+            position: relative;
         }
-        form {
-            display: grid;
-            grid-gap: 15px;
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            font-weight: 700;
         }
-        label {
-            font-weight: bold;
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--dark-color);
+            max-width: 700px;
+            margin: 0 auto;
         }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
         }
-        button {
-            background-color: #4CAF50;
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .logo-icon::before {
+            content: "MP";
             color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e8f5e9;
-            border-radius: 4px;
-            text-align: center;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 1.5rem;
         }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-bottom: 5px solid var(--accent-color);
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5ea;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(120, 149, 203, 0.2);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5ea;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: var(--dark-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .results {
+            background-color: var(--light-color);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .prediction {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
         .input-summary {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #666;
+            font-size: 0.9rem;
+            color: var(--dark-color);
         }
+
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            border-left: 5px solid var(--secondary-color);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--light-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .feature-content h3 {
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--dark-color);
+            font-size: 0.9rem;
+        }
+
+        .two-columns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .column {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .two-columns {
+                flex-direction: column;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card-body {
+                padding: 20px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animated {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+
+        /* Pulse animation for prediction result */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }    
+    /* Add this to the existing CSS */
+@keyframes floatAnimation {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);  /* Move it up */
+    }
+    100% {
+        transform: translateY(0);  /* Move it back down */
+    }
+}
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Mobile Phone Price Predictor</h1>
-        
-        <form action="/predict" method="post">
-            <div>
-                <label for="brand">Brand:</label>
-                <select id="brand" name="brand" required>
-                    <option value="">Select Brand</option>
-                    <option value="Apple">Apple</option>
-                    <option value="Samsung">Samsung</option>
-                    <option value="Xiaomi">Xiaomi</option>
-                    <option value="OnePlus">OnePlus</option>
-                    <option value="Oppo">Oppo</option>
-                    <option value="Vivo">Vivo</option>
-                    <option value="Realme">Realme</option>
-                    <option value="Nokia">Nokia</option>
-                    <option value="Motorola">Motorola</option>
-                    <option value="Asus">Asus</option>
-                </select>
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <h1>MobilePricePrediction</h1>
             </div>
-            
-            <div>
-                <label for="ram">RAM (GB):</label>
-                <input type="number" id="ram" name="ram" min="1" required>
+            <p>Advanced AI-powered mobile phone price prediction using machine learning technology</p>
+        </header>
+
+        <div class="two-columns">
+            <div class="column">
+                <div class="card animated delay-1">
+                    <div class="card-header">
+                        <i class="icon"></i> Enter Device Specifications
+                    </div>
+                    <div class="card-body">
+                        <form id="predictionForm" action="/predict" method="POST">
+                            <div class="form-group">
+                                <label for="brand" class="form-label">Brand</label>
+                                <select id="brand" name="brand" class="form-select" required>
+                                    <option value="" disabled selected>Select Brand</option>
+                                    <option value="Samsung">Samsung</option>
+                                    <option value="Apple">Apple</option>
+                                    <option value="Xiaomi">Xiaomi</option>
+                                    <option value="OnePlus">OnePlus</option>
+                                    <option value="Realme">Realme</option>
+                                    <option value="Oppo">Oppo</option>
+                                    <option value="Vivo">Vivo</option>
+                                    <option value="Google">Google</option>
+                                    <option value="Motorola">Motorola</option>
+                                    <option value="Nokia">Nokia</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ram" class="form-label">RAM (GB)</label>
+                                <select id="ram" name="ram" class="form-select" required>
+                                    <option value="" disabled selected>Select RAM</option>
+                                    <option value="1">1 GB</option>
+                                    <option value="2">2 GB</option>
+                                    <option value="3">3 GB</option>
+                                    <option value="4">4 GB</option>
+                                    <option value="6">6 GB</option>
+                                    <option value="8">8 GB</option>
+                                    <option value="12">12 GB</option>
+                                    <option value="16">16 GB</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="storage" class="form-label">Storage (GB)</label>
+                                <select id="storage" name="storage" class="form-select" required>
+                                    <option value="" disabled selected>Select Storage</option>
+                                    <option value="16">16 GB</option>
+                                    <option value="32">32 GB</option>
+                                    <option value="64">64 GB</option>
+                                    <option value="128">128 GB</option>
+                                    <option value="256">256 GB</option>
+                                    <option value="512">512 GB</option>
+                                    <option value="1024">1024 GB</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="battery" class="form-label">Battery Capacity (mAh)</label>
+                                <select id="battery" name="battery" class="form-select" required>
+                                    <option value="" disabled selected>Select Battery Capacity</option>
+                                    <option value="2000">2000 mAh</option>
+                                    <option value="2500">2500 mAh</option>
+                                    <option value="3000">3000 mAh</option>
+                                    <option value="3500">3500 mAh</option>
+                                    <option value="4000">4000 mAh</option>
+                                    <option value="4500">4500 mAh</option>
+                                    <option value="5000">5000 mAh</option>
+                                    <option value="6000">6000 mAh</option>
+                                    <option value="7000">7000 mAh</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="processor" class="form-label">Processor</label>
+                                <select id="processor" name="processor" class="form-select" required>
+                                    <option value="" disabled selected>Select Processor</option>
+                                    <option value="Snapdragon">Qualcomm Snapdragon</option>
+                                    <option value="MediaTek">MediaTek</option>
+                                    <option value="Apple">Apple Bionic/Silicon</option>
+                                    <option value="Exynos">Samsung Exynos</option>
+                                    <option value="Kirin">Huawei Kirin</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn">Predict Price</button>
+                        </form>
+
+                        {% if prediction %}
+                        <div class="results animated delay-3">
+                            <div class="prediction pulse">{{ prediction }}</div>
+                            <div class="input-summary">{{ input_data }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            
-            <div>
-                <label for="storage">Storage (GB):</label>
-                <input type="number" id="storage" name="storage" min="16" required>
+
+            <div class="column">
+                <div class="card animated delay-2">
+                    <div class="card-header">
+                        Why Choose my MobilePricePrediction?
+                    </div>
+                    <div class="card-body">
+                        <div class="feature-card">
+                            <div class="feature-icon">★</div>
+                            <div class="feature-content">
+                                <h3>AI-Powered Accuracy</h3>
+                                <p>Our advanced machine learning model has been trained on thousands of mobile phones to deliver precise price predictions.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">⚡</div>
+                            <div class="feature-content">
+                                <h3>Real-time Analysis</h3>
+                                <p>Get instant price predictions based on the latest market trends and device specifications.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-content">
+                                <h3>Comprehensive Factors</h3>
+                                <p>Our model considers multiple key factors that influence mobile prices, not just basic specifications.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">🛡️</div>
+                            <div class="feature-content">
+                                <h3>Make Informed Decisions</h3>
+                                <p>Whether buying or selling, our predictions help you make smart choices in the mobile market.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div>
-                <label for="battery">Battery Capacity (mAh):</label>
-                <input type="number" id="battery" name="battery" min="2000" required>
-            </div>
-            
-            <div>
-                <label for="processor">Processor:</label>
-                <select id="processor" name="processor" required>
-                    <option value="">Select Processor</option>
-                    <option value="Apple A15">Apple A15</option>
-                    <option value="Apple A16">Apple A16</option>
-                    <option value="Snapdragon 695">Snapdragon 695</option>
-                    <option value="Snapdragon 888">Snapdragon 888</option>
-                    <option value="Snapdragon 8 Gen 2">Snapdragon 8 Gen 2</option>
-                    <option value="Dimensity 810">Dimensity 810</option>
-                    <option value="Dimensity 9000">Dimensity 9000</option>
-                    <option value="Helio G96">Helio G96</option>
-                    <option value="Kirin 9000">Kirin 9000</option>
-                    <option value="Exynos 2100">Exynos 2100</option>
-                </select>
-            </div>
-            
-            <button type="submit">Predict Price</button>
-        </form>
-        
-        {% if prediction %}
-        <div class="result">
-            {{ prediction }}
-            {% if input_data %}
-            <div class="input-summary">
-                {{ input_data }}
-            </div>
-            {% endif %}
         </div>
-        {% endif %}
+
+        <footer class="footer">
+            <p>&copy; {{ year }} MobilePricePrice prediction | AI-Powered Mobile Price Prediction</p>
+            <p>This is a demonstration of machine learning technology for educational purposes.</p>
+        </footer>
     </div>
+
+    <script>
+        // Simple form validation
+        document.getElementById('predictionForm').addEventListener('submit', function(e) {
+            const brand = document.getElementById('brand').value;
+            const ram = document.getElementById('ram').value;
+            const storage = document.getElementById('storage').value;
+            const battery = document.getElementById('battery').value;
+            const processor = document.getElementById('processor').value;
+
+            if (!brand || brand === '') {
+                e.preventDefault();
+                alert('Please select a brand');
+                return false;
+            }
+            if (!ram || ram === '') {
+                e.preventDefault();
+                alert('Please select RAM capacity');
+                return false;
+            }
+            if (!storage || storage === '') {
+                e.preventDefault();
+                alert('Please select storage capacity');
+                return false;
+            }
+            if (!battery || battery === '') {
+                e.preventDefault();
+                alert('Please select battery capacity');
+                return false;
+            }
+            if (!processor || processor === '') {
+                e.preventDefault();
+                alert('Please select processor type');
+                return false;
+            }
+        });
+
+        // Add animation classes dynamically
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.animated');
+            elements.forEach(element => {
+                element.classList.add('animated');
+            });
+        });
+    </script>
 </body>
 </html>
